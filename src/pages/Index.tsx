@@ -30,9 +30,42 @@ const Index = () => {
                 {isListening ? 'Listening...' : 'Ready for voice commands'}
               </span>
             </div>
-            <p className="text-lg opacity-80 max-w-2xl mx-auto">
-              Try saying: "Show me electronics" • "Search for wireless headphones" • "Add to cart"
-            </p>
+            
+            {/* Enhanced Voice Commands */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto mb-8">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <h3 className="font-semibold mb-2">🛍️ Shopping Commands</h3>
+                <div className="text-sm space-y-1 opacity-80">
+                  <div>"Search for wireless headphones"</div>
+                  <div>"Show me electronics"</div>
+                  <div>"Add first item to cart"</div>
+                </div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <h3 className="font-semibold mb-2">🧭 Navigation Commands</h3>
+                <div className="text-sm space-y-1 opacity-80">
+                  <div>"Go to products"</div>
+                  <div>"Show cart"</div>
+                  <div>"Go home"</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="flex flex-wrap justify-center gap-4 mb-8">
+              <Link 
+                to="/products"
+                className="bg-white text-purple-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+              >
+                Browse Products
+              </Link>
+              <Link 
+                to="/cart"
+                className="bg-purple-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-400 transition-colors"
+              >
+                View Cart
+              </Link>
+            </div>
           </div>
         </div>
         
@@ -44,8 +77,14 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Featured Products Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Products</h2>
+          <p className="text-lg text-gray-600">
+            Explore our hand-picked selection or use voice commands to find exactly what you need
+          </p>
+        </div>
         <ProductGrid />
       </div>
 

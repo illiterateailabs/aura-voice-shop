@@ -10,6 +10,7 @@ interface VoiceState {
   error: string | null;
   audioLevel: number;
   isConnected: boolean;
+  currentIntent: string | null;
 }
 
 interface VoiceActions {
@@ -21,6 +22,7 @@ interface VoiceActions {
   setError: (error: string | null) => void;
   setAudioLevel: (level: number) => void;
   setConnected: (connected: boolean) => void;
+  setCurrentIntent: (intent: string | null) => void;
   reset: () => void;
 }
 
@@ -35,6 +37,7 @@ const initialState: VoiceState = {
   error: null,
   audioLevel: 0,
   isConnected: false,
+  currentIntent: null,
 };
 
 export const useVoiceStore = create<VoiceStore>((set) => ({
@@ -48,6 +51,7 @@ export const useVoiceStore = create<VoiceStore>((set) => ({
   setError: (error) => set({ error }),
   setAudioLevel: (level) => set({ audioLevel: level }),
   setConnected: (connected) => set({ isConnected: connected }),
+  setCurrentIntent: (intent) => set({ currentIntent: intent }),
   
   reset: () => set(initialState),
 }));

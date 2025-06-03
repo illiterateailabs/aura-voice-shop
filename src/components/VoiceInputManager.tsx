@@ -1,5 +1,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useVoiceStore } from '../stores/voiceStore';
 import { useProductStore } from '../stores/productStore';
 import { useCartStore } from '../stores/cartStore';
@@ -13,12 +14,14 @@ interface VoiceCommand {
     filter_type?: string;
     filter_value?: string | number;
     price_max?: number;
+    route?: string;
   };
   final_transcript: string;
   confirmation_speech: string;
 }
 
 const VoiceInputManager = () => {
+  const navigate = useNavigate();
   const {
     isListening,
     setListening,
@@ -26,11 +29,13 @@ const VoiceInputManager = () => {
     setTranscript,
     setError,
     setConnected,
-    setAudioLevel
+    setAudioLevel,
+    setCurrentIntent,
+    setLastCommand
   } = useVoiceStore();
   
   const { searchProducts, setFilters, filteredProducts } = useProductStore();
-  const { addItem, setCartOpen } = useCartStore();
+  const { addItem, setCartOpen, clearCart } = useCartStore();
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -47,7 +52,7 @@ const VoiceInputManager = () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
-          sampleRate: 16000,
+          sampleRate: 44100,
           channelCount: 1,
           echoCancellation: true,
           noiseSuppression: true,
@@ -57,7 +62,7 @@ const VoiceInputManager = () => {
       streamRef.current = stream;
       
       // Create audio context for level monitoring
-      audioContextRef.current = new AudioContext({ sampleRate: 16000 });
+      audioContextRef.current = new AudioContext();
       const source = audioContextRef.current.createMediaStreamSource(stream);
       const analyser = audioContextRef.current.createAnalyser();
       analyser.fftSize = 256;
@@ -66,13 +71,11 @@ const VoiceInputManager = () => {
       // Monitor audio levels
       const dataArray = new Uint8Array(analyser.frequencyBinCount);
       const updateAudioLevel = () => {
+        if (!isInitialized) return;
         analyser.getByteFrequencyData(dataArray);
         const average = dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
         setAudioLevel(average / 255);
-        
-        if (isInitialized) {
-          requestAnimationFrame(updateAudioLevel);
-        }
+        requestAnimationFrame(updateAudioLevel);
       };
       updateAudioLevel();
       
@@ -97,7 +100,7 @@ const VoiceInputManager = () => {
       streamRef.current.getTracks().forEach(track => track.stop());
     }
     
-    if (audioContextRef.current) {
+    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
       audioContextRef.current.close();
     }
   };
@@ -158,8 +161,6 @@ const VoiceInputManager = () => {
     setProcessing(true);
     
     try {
-      // Simulate API call to voice processing endpoint
-      // In a real implementation, this would send audio to your backend
       await simulateVoiceProcessing(audioBlob);
     } catch (error) {
       console.error('Voice processing failed:', error);
@@ -173,8 +174,26 @@ const VoiceInputManager = () => {
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // Simulate different voice commands for demo
+    // Enhanced demo commands including navigation
     const demoCommands = [
+      {
+        intent: 'navigate',
+        entities: { route: 'home' },
+        final_transcript: 'Go home',
+        confirmation_speech: 'Going to homepage'
+      },
+      {
+        intent: 'navigate',
+        entities: { route: 'products' },
+        final_transcript: 'Show products',
+        confirmation_speech: 'Showing all products'
+      },
+      {
+        intent: 'navigate',
+        entities: { route: 'cart' },
+        final_transcript: 'Show cart',
+        confirmation_speech: 'Opening your cart'
+      },
       {
         intent: 'search',
         entities: { query: 'wireless headphones' },
@@ -185,19 +204,19 @@ const VoiceInputManager = () => {
         intent: 'filter',
         entities: { category: 'electronics' },
         final_transcript: 'Show me electronics',
-        confirmation_speech: 'Showing electronics category'
+        confirmation_speech: 'Filtering by electronics'
       },
       {
         intent: 'cart_add_item',
         entities: { item_identifier: 'first' },
-        final_transcript: 'Add the first item to cart',
+        final_transcript: 'Add first item to cart',
         confirmation_speech: 'Added first item to cart'
       },
       {
-        intent: 'cart_view',
+        intent: 'cart_clear',
         entities: {},
-        final_transcript: 'Show my cart',
-        confirmation_speech: 'Opening your cart'
+        final_transcript: 'Clear cart',
+        confirmation_speech: 'Cart cleared'
       }
     ];
     
@@ -207,18 +226,32 @@ const VoiceInputManager = () => {
 
   const executeVoiceCommand = async (command: VoiceCommand) => {
     setTranscript(command.final_transcript);
+    setCurrentIntent(command.intent);
+    setLastCommand(command.confirmation_speech);
     
     try {
       switch (command.intent) {
+        case 'navigate':
+          if (command.entities.route === 'home') {
+            navigate('/');
+          } else if (command.entities.route === 'products') {
+            navigate('/products');
+          } else if (command.entities.route === 'cart') {
+            navigate('/cart');
+          }
+          break;
+          
         case 'search':
           if (command.entities.query) {
             searchProducts(command.entities.query);
+            navigate('/products');
           }
           break;
           
         case 'filter':
           if (command.entities.category) {
             setFilters({ category: command.entities.category });
+            navigate('/products');
           }
           break;
           
@@ -230,6 +263,10 @@ const VoiceInputManager = () => {
           
         case 'cart_view':
           setCartOpen(true);
+          break;
+
+        case 'cart_clear':
+          clearCart();
           break;
           
         default:

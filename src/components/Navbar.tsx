@@ -1,13 +1,18 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useCartStore } from '../stores/cartStore';
 import { useVoiceStore } from '../stores/voiceStore';
 
 const Navbar = () => {
-  const { items, getItemCount, toggleCart } = useCartStore();
+  const { getItemCount, toggleCart } = useCartStore();
   const { isListening, isConnected } = useVoiceStore();
+  const location = useLocation();
   const itemCount = getItemCount();
+
+  const isActiveRoute = (path: string) => {
+    return location.pathname === path;
+  };
 
   return (
     <nav className="bg-white shadow-lg sticky top-0 z-50">
@@ -36,11 +41,35 @@ const Navbar = () => {
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-gray-700 hover:text-purple-600 transition-colors">
+            <Link 
+              to="/" 
+              className={`transition-colors ${
+                isActiveRoute('/') 
+                  ? 'text-purple-600 font-medium' 
+                  : 'text-gray-700 hover:text-purple-600'
+              }`}
+            >
               Home
             </Link>
-            <Link to="/products" className="text-gray-700 hover:text-purple-600 transition-colors">
+            <Link 
+              to="/products" 
+              className={`transition-colors ${
+                isActiveRoute('/products') 
+                  ? 'text-purple-600 font-medium' 
+                  : 'text-gray-700 hover:text-purple-600'
+              }`}
+            >
               Products
+            </Link>
+            <Link 
+              to="/cart" 
+              className={`transition-colors ${
+                isActiveRoute('/cart') 
+                  ? 'text-purple-600 font-medium' 
+                  : 'text-gray-700 hover:text-purple-600'
+              }`}
+            >
+              Cart
             </Link>
           </div>
 

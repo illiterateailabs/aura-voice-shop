@@ -9,7 +9,8 @@ const VoiceFeedback = () => {
     transcript, 
     error, 
     audioLevel,
-    lastCommand 
+    lastCommand,
+    currentIntent
   } = useVoiceStore();
 
   if (!isListening && !isProcessing && !transcript && !error) {
@@ -68,10 +69,12 @@ const VoiceFeedback = () => {
             </div>
           )}
 
-          {/* Last Command */}
+          {/* Last Command with Intent */}
           {lastCommand && (
             <div className="bg-purple-50 rounded-lg p-3">
-              <p className="text-sm text-purple-600 mb-1">Last action:</p>
+              <p className="text-sm text-purple-600 mb-1">
+                Action taken {currentIntent && `(${currentIntent})`}:
+              </p>
               <p className="font-medium text-purple-900">{lastCommand}</p>
             </div>
           )}
@@ -89,21 +92,22 @@ const VoiceFeedback = () => {
             <div className="text-gray-600 text-sm">
               <p>Speak now... (or say "stop" to cancel)</p>
               <div className="mt-2 text-xs text-gray-500">
-                Try: "Search for headphones" • "Show electronics" • "Add first item to cart"
+                Try navigation: "Go home" • "Show products" • "Show cart"
               </div>
             </div>
           )}
         </div>
 
-        {/* Voice Commands Help */}
+        {/* Enhanced Voice Commands Help */}
         {!isListening && !isProcessing && !error && (
           <div className="mt-4 pt-3 border-t border-gray-100">
             <p className="text-xs text-gray-500 mb-2">Voice commands you can try:</p>
             <div className="grid grid-cols-1 gap-1 text-xs text-gray-600">
-              <div>"Search for [product]"</div>
-              <div>"Show me [category]"</div>
-              <div>"Add first item to cart"</div>
-              <div>"Show my cart"</div>
+              <div className="font-medium text-purple-600 mb-1">Navigation:</div>
+              <div>"Go home" • "Show products" • "Show cart"</div>
+              <div className="font-medium text-purple-600 mb-1 mt-2">Shopping:</div>
+              <div>"Search for [product]" • "Show me [category]"</div>
+              <div>"Add first item to cart" • "Clear cart"</div>
             </div>
           </div>
         )}
