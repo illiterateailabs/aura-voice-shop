@@ -174,7 +174,7 @@ const VoiceInputManager = () => {
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // Enhanced demo commands including navigation
+    // Enhanced demo commands including product navigation
     const demoCommands = [
       {
         intent: 'navigate',
@@ -193,6 +193,18 @@ const VoiceInputManager = () => {
         entities: { route: 'cart' },
         final_transcript: 'Show cart',
         confirmation_speech: 'Opening your cart'
+      },
+      {
+        intent: 'navigate_product',
+        entities: { product_id: filteredProducts[0]?.id || '1' },
+        final_transcript: 'Show first product details',
+        confirmation_speech: 'Opening product details'
+      },
+      {
+        intent: 'compare_products',
+        entities: { product_ids: filteredProducts.slice(0, 2).map(p => p.id) },
+        final_transcript: 'Compare first two products',
+        confirmation_speech: 'Opening product comparison'
       },
       {
         intent: 'search',
@@ -238,6 +250,18 @@ const VoiceInputManager = () => {
             navigate('/products');
           } else if (command.entities.route === 'cart') {
             navigate('/cart');
+          }
+          break;
+
+        case 'navigate_product':
+          if (command.entities.product_id) {
+            navigate(`/product/${command.entities.product_id}`);
+          }
+          break;
+
+        case 'compare_products':
+          if (command.entities.product_ids && command.entities.product_ids.length > 0) {
+            navigate(`/compare?products=${command.entities.product_ids.join(',')}`);
           }
           break;
           
