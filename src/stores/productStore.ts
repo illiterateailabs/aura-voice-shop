@@ -57,6 +57,7 @@ interface ProductActions {
   searchProducts: (query: string) => void;
   filterProducts: () => void;
   applySort: (sortBy: string, order?: 'asc' | 'desc') => void;
+  applySortToArray: (products: Product[], sortBy: string, order: 'asc' | 'desc') => Product[];
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   getProductById: (id: string) => Product | undefined;
