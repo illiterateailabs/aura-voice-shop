@@ -1,10 +1,24 @@
 
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { useProductStore } from '../stores/productStore';
 import ProductCard from './ProductCard';
+import QuickViewModal from './QuickViewModal';
+import { Product } from '../stores/productStore';
 
 const ProductGrid = () => {
   const { filteredProducts, filters, loading, error } = useProductStore();
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+
+  const handleQuickView = (product: Product) => {
+    setQuickViewProduct(product);
+    setIsQuickViewOpen(true);
+  };
+
+  const closeQuickView = () => {
+    setIsQuickViewOpen(false);
+    setQuickViewProduct(null);
+  };
 
   return (
     <div className="w-full">
@@ -46,6 +60,7 @@ const ProductGrid = () => {
                   key={product.id} 
                   product={product} 
                   index={index}
+                  onQuickView={handleQuickView}
                 />
               ))}
             </div>
@@ -65,6 +80,13 @@ const ProductGrid = () => {
           )}
         </>
       )}
+
+      {/* Quick View Modal */}
+      <QuickViewModal
+        product={quickViewProduct}
+        isOpen={isQuickViewOpen}
+        onClose={closeQuickView}
+      />
     </div>
   );
 };

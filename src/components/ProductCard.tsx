@@ -1,15 +1,17 @@
-
 import React from 'react';
 import { Product } from '../stores/productStore';
 import { useCartStore } from '../stores/cartStore';
+import { Link } from 'react-router-dom';
+import { Heart, Eye } from 'react-feather';
 
 interface ProductCardProps {
   product: Product;
   index: number;
+  onQuickView?: (product: Product) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
-  const { addItem } = useCartStore();
+const ProductCard: React.FC<ProductCardProps> = ({ product, index, onQuickView }) => {
+  const { addItem, toggleItem, isInWishlist } = useCartStore();
 
   const handleAddToCart = () => {
     addItem(product);
@@ -59,11 +61,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
     <div className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group">
       {/* Product Image */}
       <div className="relative aspect-square overflow-hidden bg-gray-100">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-        />
+        <Link to={`/product/${product.id}`}>
+          <img
+            src={product.image}
+            alt={product.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        </Link>
         
         {/* Featured Badge */}
         {product.featured && (
@@ -78,6 +82,28 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
             Sale
           </div>
         )}
+
+        {/* Action Buttons */}
+        <div className="absolute top-3 right-3 space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <button
+            onClick={() => toggleItem(product)}
+            className={`w-8 h-8 rounded-full shadow-lg flex items-center justify-center transition-colors ${
+              isInWishlist(product.id)
+                ? 'bg-red-500 text-white'
+                : 'bg-white text-gray-600 hover:text-red-500'
+            }`}
+          >
+            <Heart className={`w-4 h-4 ${isInWishlist(product.id) ? 'fill-current' : ''}`} />
+          </button>
+          {onQuickView && (
+            <button
+              onClick={() => onQuickView(product)}
+              className="w-8 h-8 bg-white text-gray-600 rounded-full shadow-lg hover:text-purple-600 transition-colors flex items-center justify-center"
+            >
+              <Eye className="w-4 h-4" />
+            </button>
+          )}
+        </div>
 
         {/* Quick Add Button */}
         <button
@@ -98,10 +124,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
           <span>{product.category}</span>
         </div>
 
-        {/* Product Name */}
-        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-purple-600 transition-colors">
-          {product.name}
-        </h3>
+        {/* Product Name - Now clickable */}
+        <Link to={`/product/${product.id}`}>
+          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-purple-600 transition-colors cursor-pointer">
+            {product.name}
+          </h3>
+        </Link>
 
         {/* Rating & Reviews */}
         <div className="flex items-center space-x-2 mb-3">
