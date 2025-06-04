@@ -25,7 +25,6 @@ interface CartActions {
   setCartOpen: (open: boolean) => void;
   calculateTotal: () => void;
   getItemCount: () => number;
-  getTotalPrice: () => number;
 }
 
 type CartStore = CartState & CartActions;
@@ -104,11 +103,6 @@ export const useCartStore = create<CartStore>()(
         const { items } = get();
         const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
         set({ total });
-      },
-      
-      getTotalPrice: () => {
-        const { items } = get();
-        return items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
       },
       
       getItemCount: () => {

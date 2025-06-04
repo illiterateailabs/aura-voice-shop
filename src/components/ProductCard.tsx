@@ -1,9 +1,7 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Product } from '../stores/productStore';
 import { useCartStore } from '../stores/cartStore';
-import { Eye, GitCompare } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;
@@ -12,20 +10,9 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
   const { addItem } = useCartStore();
-  const navigate = useNavigate();
 
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleAddToCart = () => {
     addItem(product);
-  };
-
-  const handleViewProduct = () => {
-    navigate(`/product/${product.id}`);
-  };
-
-  const handleCompare = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigate(`/compare?products=${product.id}`);
   };
 
   const formatPrice = (price: number) => {
@@ -69,10 +56,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
   };
 
   return (
-    <div 
-      className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group cursor-pointer"
-      onClick={handleViewProduct}
-    >
+    <div className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group">
       {/* Product Image */}
       <div className="relative aspect-square overflow-hidden bg-gray-100">
         <img
@@ -95,32 +79,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
           </div>
         )}
 
-        {/* Quick Actions */}
-        <div className="absolute bottom-3 right-3 flex space-x-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
-          <button
-            onClick={handleCompare}
-            className="bg-white text-gray-600 w-10 h-10 rounded-full shadow-lg hover:bg-gray-100 hover:text-purple-600 flex items-center justify-center"
-            title="Compare"
-          >
-            <GitCompare className="w-4 h-4" />
-          </button>
-          <button
-            onClick={handleViewProduct}
-            className="bg-white text-gray-600 w-10 h-10 rounded-full shadow-lg hover:bg-gray-100 hover:text-purple-600 flex items-center justify-center"
-            title="Quick View"
-          >
-            <Eye className="w-4 h-4" />
-          </button>
-          <button
-            onClick={handleAddToCart}
-            className="bg-white text-purple-600 w-10 h-10 rounded-full shadow-lg hover:bg-purple-600 hover:text-white flex items-center justify-center"
-            title="Add to Cart"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-          </button>
-        </div>
+        {/* Quick Add Button */}
+        <button
+          onClick={handleAddToCart}
+          className="absolute bottom-3 right-3 bg-white text-purple-600 w-10 h-10 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-purple-600 hover:text-white flex items-center justify-center"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
       </div>
 
       {/* Product Info */}
