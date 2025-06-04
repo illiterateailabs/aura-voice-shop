@@ -68,21 +68,21 @@ const Checkout = () => {
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Order Summary</h2>
               <div className="space-y-4">
                 {items.map((item) => (
-                  <div key={item.id} className="flex items-center space-x-4">
+                  <div key={item.product.id} className="flex items-center space-x-4">
                     <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
                       <img
-                        src={item.image}
-                        alt={item.name}
+                        src={item.product.image}
+                        alt={item.product.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-medium text-gray-900">{item.name}</h3>
+                      <h3 className="font-medium text-gray-900">{item.product.name}</h3>
                       <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
                     </div>
                     <div className="text-right">
                       <p className="font-medium text-gray-900">
-                        {formatPrice(item.price * item.quantity)}
+                        {formatPrice(item.product.price * item.quantity)}
                       </p>
                     </div>
                   </div>

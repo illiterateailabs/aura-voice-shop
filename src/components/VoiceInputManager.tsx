@@ -39,6 +39,11 @@ interface VoiceCommand {
     product_ids?: string[];
     sort_by?: string;
     sort_order?: string;
+    target_page?: string;
+    color?: string;
+    product_type?: string;
+    gender?: string;
+    query_topic?: string;
   };
   parameters?: {
     quantity?: number;
@@ -655,7 +660,7 @@ const VoiceInputManager: React.FC = () => {
       if (productId) {
         const product = products.find(p => p.id === productId);
         if (product) {
-          addItem({ ...product, quantity });
+          addItem(product);
           return;
         }
       }
@@ -686,7 +691,7 @@ const VoiceInputManager: React.FC = () => {
     
     // Add to cart if found
     if (productToAdd) {
-      addItem({ ...productToAdd, quantity });
+      addItem(productToAdd);
     } else {
       setError(`Could not find product ${item_identifier}`);
     }
@@ -717,13 +722,13 @@ const VoiceInputManager: React.FC = () => {
     } else {
       // Try to find item by name
       itemToRemove = cartItems.find(item => 
-        item.name.toLowerCase().includes(item_identifier.toLowerCase())
+        item.product.name.toLowerCase().includes(item_identifier.toLowerCase())
       );
     }
     
     // Remove from cart if found
     if (itemToRemove) {
-      removeItem(itemToRemove.id);
+      removeItem(itemToRemove.product.id);
     } else {
       setError(`Could not find item ${item_identifier} in your cart`);
     }
