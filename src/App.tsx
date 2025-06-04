@@ -9,6 +9,7 @@ import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import ProductCompare from "./pages/ProductCompare";
 import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
 import CartView from "./components/CartView";
 import AdminLogin from "./pages/AdminLogin";
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/compare" element={<ProductCompare />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/products" element={<AdminProducts />} />
