@@ -2,7 +2,7 @@ import React from 'react';
 import { Product } from '../stores/productStore';
 import { useCartStore } from '../stores/cartStore';
 import { Link } from 'react-router-dom';
-import { Heart, Eye } from 'react-feather';
+import { Heart, Eye } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;

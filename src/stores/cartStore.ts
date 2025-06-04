@@ -14,6 +14,7 @@ interface CartState {
   items: CartItem[];
   isOpen: boolean;
   total: number;
+  wishlistItems: Product[];
 }
 
 interface CartActions {
@@ -25,6 +26,8 @@ interface CartActions {
   setCartOpen: (open: boolean) => void;
   calculateTotal: () => void;
   getItemCount: () => number;
+  toggleItem: (product: Product) => void;
+  isInWishlist: (productId: string) => boolean;
 }
 
 type CartStore = CartState & CartActions;
@@ -33,6 +36,7 @@ const initialState: CartState = {
   items: [],
   isOpen: false,
   total: 0,
+  wishlistItems: [],
 };
 
 export const useCartStore = create<CartStore>()(
@@ -108,6 +112,26 @@ export const useCartStore = create<CartStore>()(
       getItemCount: () => {
         const { items } = get();
         return items.reduce((count, item) => count + item.quantity, 0);
+      },
+
+      toggleItem: (product) => {
+        const { wishlistItems } = get();
+        const isInWishlist = wishlistItems.some(item => item.id === product.id);
+        
+        if (isInWishlist) {
+          set({ 
+            wishlistItems: wishlistItems.filter(item => item.id !== product.id) 
+          });
+        } else {
+          set({ 
+            wishlistItems: [...wishlistItems, product] 
+          });
+        }
+      },
+
+      isInWishlist: (productId) => {
+        const { wishlistItems } = get();
+        return wishlistItems.some(item => item.id === productId);
       },
     }),
     {
